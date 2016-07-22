@@ -1,28 +1,30 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta http-equiv="Content-Style-Type" content="text/css" />
-  <meta name="generator" content="pandoc" />
-  <meta name="author" content="Daniel Waterworth" />
-  <meta name="date" content="2016-07-22" />
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="author" content="Daniel Waterworth">
+  <meta name="dcterms.date" content="2016-07-22">
   <title>QBF Solving</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="./../css/main.css" type="text/css" />
+  <link rel="stylesheet" href="./../css/main.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-<div id="header">
+<header>
 <h1 class="title">QBF Solving</h1>
 <h2 class="author">Daniel Waterworth</h2>
 <h3 class="date">July 22, 2016</h3>
-</div>
+</header>
 <h2 id="what-is-qbf-solving">What is QBF solving?</h2>
 <blockquote>
-<div class="figure">
+<figure>
 <img src="https://imgs.xkcd.com/comics/travelling_salesman_problem.png" />
-
-</div>
+</figure>
 </blockquote>
 <blockquote>
 <p><em><a href="https://xkcd.com/399/">travelling salesman problem - xkcd 399</a></em></p>
@@ -33,10 +35,9 @@
 <p>However, there are caveats. Since SAT solvers attempt to solve the <a href="https://en.wikipedia.org/wiki/Boolean_satisfiability_problem">SAT problem</a>, it must be possible to translate your problem into a <a href="https://en.wikipedia.org/wiki/Propositional_formula">propositional expression</a>. In practice this means that you can only verify properties about programs that don’t have loops or hardware that forms <a href="https://en.wikipedia.org/wiki/Combinational_logic">combinational circuits</a>. (If you unroll your loops up to some fixed bound, you are doing <a href="https://en.wikipedia.org/wiki/Model_checking">bounded model checking</a>).</p>
 <p>Another limitation is that, although you can pose questions like, “does there exist an x such that y is true?” or “for all x is y true?”, you can’t ask questions like “does there exist an x such that for all y, z is true?”.</p>
 <p>It turns out, although NP-complete problems are hard, there are more difficult classes of problems.</p>
-<div class="figure">
+<figure>
 <img src="../images/thinking.png" />
-
-</div>
+</figure>
 <h2 id="puzzles-vs-games">Puzzles vs Games</h2>
 <p>There is an interesting trend amongst the kinds of puzzles that people like to solve. Many of them are <a href="https://en.wikipedia.org/wiki/List_of_NP-complete_problems#Games_and_puzzles">NP-complete</a>, and conversely many NP-complete problems can be made into interesting puzzles.</p>
 <p>In the same manner, many two-player games are <a href="https://en.wikipedia.org/wiki/PSPACE-complete">PSPACE-complete</a>. PSPACE is the class of problems that can be solved using polynomial space and PSPACE-complete problems are the hardest problems in PSPACE. PSPACE contains NP, so it is more difficult.</p>

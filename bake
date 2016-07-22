@@ -10,6 +10,7 @@ for FILE in `find | grep "\.md$"`; do
         --smart \
         --css=$CSS_FILE \
         --include-in-header=./header/responsive.html \
+        --to=html5 \
         $FILE \
         -o ${FILE%.md}.html;
 done
