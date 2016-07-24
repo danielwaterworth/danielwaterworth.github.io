@@ -26,12 +26,30 @@ a {
 h1 {
     margin-bottom: 50px;
     font-family: essays1743;
-    font-size: 30pt;
+    font-size: 35pt;
     text-align: center;
 }
 
 h2 {
     font-family: essays1743;
+}
+
+pre, code { color: #d3d7cf; background-color: #2e3436; }
+code > span.co { color: #888a85; } /* Comment */
+code > span.kw { color: #eeeeec; } /* Keyword */
+code > span.dv { color: #ce5c00; } /* DecVal */
+code > span.st { color: #edd400; } /* String */
+
+code, pre {
+    border-radius: 2px;
+}
+
+code {
+    padding: 0.2em;
+}
+
+pre {
+    padding: 1em;
 }
 
 figure {

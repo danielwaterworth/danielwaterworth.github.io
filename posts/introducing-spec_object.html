@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="author" content="Daniel Waterworth">
+  <meta name="dcterms.date" content="2016-07-23">
+  <title>Introducing spec_object</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { font-weight: bold; } /* Keyword */
+code > span.dt { text-decoration: underline; } /* DataType */
+code > span.co { font-style: italic; } /* Comment */
+code > span.al { font-weight: bold; } /* Alert */
+code > span.er { font-weight: bold; } /* Error */
+code > span.wa { font-style: italic; } /* Warning */
+code > span.cf { font-weight: bold; } /* ControlFlow */
+code > span.pp { font-weight: bold; } /* Preprocessor */
+code > span.do { font-style: italic; } /* Documentation */
+code > span.an { font-style: italic; } /* Annotation */
+code > span.cv { font-style: italic; } /* CommentVar */
+code > span.in { font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="./../css/main.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<header>
+<h1 class="title">Introducing spec_object</h1>
+<h2 class="author">Daniel Waterworth</h2>
+<h3 class="date">July 23, 2016</h3>
+</header>
+<figure>
+<img src="../images/orb.jpg" />
+</figure>
+<h2 id="rationale">Rationale</h2>
+<p>Here’s an interesting question: “what would a programming language look like that allows you to describe what a program does, but not how that is accomplished?”. As programmers, we like to talk about declarative languages and DSLs and APIs, but how far can declarative-ness be pushed?</p>
+<p>Like all good fundamental CS questions, it was answered in the 70s and since then there have been a number of so-called <a href="https://en.wikipedia.org/wiki/Specification_language">program specification languages</a>.</p>
+<p>Now, it’s really important that you understand that I’m not talking about <a href="https://en.wikipedia.org/wiki/UML">UML</a>; a language used to describe the architecture of software. I’m talking about languages that express behaviour, but in a really high-level, abstract kind of way.</p>
+<p>These languages tend to be based on logic. The classic example is sorting. Instead of saying, “in order to sort, we split the input into two equal halfs, sort the two halfs recursively and merge the results”, we say, “sorting is a function that takes a list and produces a list. The output is a permutation of the input and the output is <a href="https://en.wikipedia.org/wiki/Monotonic_function">monotone</a>”.</p>
+<p>Expressing pure functions is all well and good, but what about real programs with side-effects? Without further ado, let’s dive into the <code>spec_object</code> DSL.</p>
+<h2 id="a-worked-example">A worked example</h2>
+<p>For this example, we’re going to specify the behaviour of a hashtable. To limit the scope, we’re only going to consider <code>set</code>, <code>get</code> and <code>delete</code>.</p>
+<p><code>spec_object</code> models time explicitly. Time is linear, discrete and the future doesn’t exist. <em>If this causes you philosophical problems, I don’t know what to suggest.</em></p>
+<p>Specifying the behaviour of the <code>set</code> and <code>del</code> is the easy part:</p>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby">behaviour <span class="st">:set</span> <span class="kw">do</span> |args, output|
+    output == <span class="dv">nil</span>
+<span class="kw">end</span>
+
+behaviour <span class="st">:del</span> <span class="kw">do</span> |args, output|
+    output == <span class="dv">nil</span>
+<span class="kw">end</span></code></pre></div>
+<p><code>get</code> is much more difficult. The behaviour of <code>get</code> depends on what has already happened. There are a few differents cases to consider:</p>
+<ul>
+<li>The key was never set,</li>
+<li>The key was set and deleted,</li>
+<li>The key was set and updated,</li>
+</ul>
+<p>Any logical assertions we make should be true of all executions; we need to somehow divide the space of possibilities to attack this problem. One natural line of division is whether the output was <code>nil</code> or not.</p>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby">behaviour <span class="st">:get</span> <span class="kw">do</span> |args, output|
+    <span class="co"># ite stands for if-then-else</span>
+    ite(
+        output == <span class="dv">nil</span>,
+        <span class="dv">true</span>, <span class="co"># This should be true when nil was the result</span>
+        <span class="dv">true</span>  <span class="co"># This should be true when it wasn&#39;t</span>
+    )
+<span class="kw">end</span></code></pre></div>
+<p>If the output was <code>nil</code>, it means, either the key was never set or the key was deleted and hasn’t been set since:</p>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby">behaviour <span class="st">:get</span> <span class="kw">do</span> |args, output|
+    the_key_was_never_set = <span class="dv">true</span>
+    the_key_was_deleted_and_not_set_since = <span class="dv">true</span>
+
+    ite(
+        output == <span class="dv">nil</span>,
+        either(the_key_was_never_set, the_key_was_deleted_and_not_set_since),
+        <span class="dv">true</span>
+    )
+<span class="kw">end</span></code></pre></div>
+<p>The key never being set means there doesn’t exist a time and a value where the object received <code>:set</code> at that time with the <code>key</code> from <code>args</code> and the value:</p>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby">key = args[<span class="dv">0</span>]
+
+the_key_was_never_set =
+    !exist <span class="kw">do</span> |set_time|
+        exist <span class="kw">do</span> |value|
+            received(<span class="st">:set</span>).at(set_time).with(key, value)
+        <span class="kw">end</span>
+    <span class="kw">end</span></code></pre></div>
+<p>The key was deleted and not set again means there exists a time at which the key was deleted for which there does not exist a later time at which the <code>key</code> was set.</p>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby">the_key_was_deleted_and_not_set_since =
+    exist <span class="kw">do</span> |delete_time|
+        key_was_deleted_at_delete_time =
+            received(<span class="st">:del</span>).at(delete_time).with(key)
+
+        no_later_set_time =
+            !exist <span class="kw">do</span> |later_set_time|
+                later_set_time_is_later =
+                    later_set_time &gt; delete_time
+
+                key_was_set_at_later_set_time =
+                    exist <span class="kw">do</span> |value|
+                        received(<span class="st">:set</span>).at(later_set_time).with(key, value)
+                    <span class="kw">end</span>
+
+                both(later_set_time_is_later, key_was_set_at_later_set_time)
+            <span class="kw">end</span>
+
+        both(key_was_deleted_at_delete_time, no_later_set_time)
+    <span class="kw">end</span></code></pre></div>
+<p>That covers the <code>output == nil</code> case. If the <code>output</code> is not <code>nil</code>, it means that there exists a time at which the <code>key</code> was set with <code>output</code> and there doesn’t exist a later time at which the key was deleted or a set again.</p>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby">exists <span class="kw">do</span> |set_time|
+    key_was_set_at_set_time =
+        received(<span class="st">:set</span>).at(set_time).with(key, output)
+
+    no_later_set_time =
+        !exist <span class="kw">do</span> |later_set_time|
+            later_set_time_is_later =
+                later_set_time &gt; set_time
+
+            set_at_later_set_time =
+                exist <span class="kw">do</span> |value|
+                    received(<span class="st">:set</span>).at(later_set_time).with(key, value)
+                <span class="kw">end</span>
+
+            both(later_set_time_is_later, set_at_later_set_time)
+        <span class="kw">end</span>
+
+    no_later_delete_time =
+        !exist <span class="kw">do</span> |later_delete_time|
+            later_delete_time_is_later =
+                later_delete_time &gt; set_time
+
+            delete_at_later_delete_time =
+                received(<span class="st">:set</span>).at(later_delete_time).with(key)
+
+            both(later_delete_time_is_later, delete_at_later_delete_time)
+        <span class="kw">end</span>
+
+    all(key_was_set_at_set_time, no_later_set_time, no_later_delete_time)
+<span class="kw">end</span></code></pre></div>
+<p>And we’re done. Tying it all together:</p>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby">behaviour <span class="st">:get</span> <span class="kw">do</span> |args, output|
+    key = args[<span class="dv">0</span>]
+
+    the_key_was_never_set =
+        !exist <span class="kw">do</span> |set_time|
+            exist <span class="kw">do</span> |value|
+                received(<span class="st">:set</span>).at(set_time).with(key, value)
+            <span class="kw">end</span>
+        <span class="kw">end</span>
+
+    the_key_was_deleted_and_not_set_since =
+        exist <span class="kw">do</span> |delete_time|
+            key_was_deleted_at_delete_time =
+                received(<span class="st">:del</span>).at(delete_time).with(key)
+
+            no_later_set_time =
+                !exist <span class="kw">do</span> |later_set_time|
+                    later_set_time_is_later =
+                        later_set_time &gt; delete_time
+
+                    key_was_set_at_later_set_time =
+                        exist <span class="kw">do</span> |value|
+                            received(<span class="st">:set</span>).at(later_set_time).with(key, value)
+                        <span class="kw">end</span>
+
+                    both(later_set_time_is_later, key_was_set_at_later_set_time)
+                <span class="kw">end</span>
+
+            both(key_was_deleted_at_delete_time, no_later_set_time)
+        <span class="kw">end</span>
+
+    the_key_was_last_set_to_output =
+        exists <span class="kw">do</span> |set_time|
+            key_was_set_at_set_time =
+                received(<span class="st">:set</span>).at(set_time).with(key, output)
+
+            no_later_set_time =
+                !exist <span class="kw">do</span> |later_set_time|
+                    later_set_time_is_later =
+                        later_set_time &gt; set_time
+
+                    set_at_later_set_time =
+                        exist <span class="kw">do</span> |value|
+                            received(<span class="st">:set</span>).at(later_set_time).with(key, value)
+                        <span class="kw">end</span>
+
+                    both(later_set_time_is_later, set_at_later_set_time)
+                <span class="kw">end</span>
+
+            no_later_delete_time =
+                !exist <span class="kw">do</span> |later_delete_time|
+                    later_delete_time_is_later =
+                        later_delete_time &gt; set_time
+
+                    delete_at_later_delete_time =
+                        received(<span class="st">:set</span>).at(later_delete_time).with(key)
+
+                    both(later_delete_time_is_later, delete_at_later_delete_time)
+                <span class="kw">end</span>
+
+            all(key_was_set_at_set_time, no_later_set_time, no_later_delete_time)
+        <span class="kw">end</span>
+
+    ite(
+        output == <span class="dv">nil</span>,
+        either(the_key_was_never_set, the_key_was_deleted_and_not_set_since),
+        the_key_was_last_set_to_output
+    )
+<span class="kw">end</span></code></pre></div>
+<p>It’s kind of wordy; Partly because I intentionally used riduculously long variable names and partly because I didn’t break out the individual pieces into their own methods, but hopefully you get the idea.</p>
+<p>Having gone to the trouble of specifying the behaviour of an object using logical language, <code>spec_object</code> is now able to detect cases where these constraints are broken (such as when we insert <code>nil</code> as a value). This would allow you to fuzz test your stateful APIs against their logical specification.</p>
+<p>I hope you found this interesting. <strong>Please note, <code>spec_object</code> is a prototype and should not be used for anything you care about!</strong></p>
+<p><a href="https://github.com/DanielWaterworth/spec_object">Here’s a link to the repo.</a></p>
+</body>
+</html>
