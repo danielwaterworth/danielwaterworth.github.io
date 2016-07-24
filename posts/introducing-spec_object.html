@@ -43,16 +43,17 @@ code > span.in { font-style: italic; } /* Information */
 <figure>
 <img src="../images/orb.jpg" />
 </figure>
-<h2 id="rationale">Rationale</h2>
+<p><em><code>spec_object</code> is a DSL for describing the behaviour of objects. This is useful for documentation and testing. <strong>It is a prototype and should not be used for anything remotely serious!</strong> Please consider thing blog post as a request for comments.</em></p>
+<h2 id="introduction">Introduction</h2>
 <p>Here’s an interesting question: “what would a programming language look like that allows you to describe what a program does, but not how that is accomplished?”. As programmers, we like to talk about declarative languages and DSLs and APIs, but how far can declarative-ness be pushed?</p>
 <p>Like all good fundamental CS questions, it was answered in the 70s and since then there have been a number of so-called <a href="https://en.wikipedia.org/wiki/Specification_language">program specification languages</a>.</p>
-<p>Now, it’s really important that you understand that I’m not talking about <a href="https://en.wikipedia.org/wiki/UML">UML</a>; a language used to describe the architecture of software. I’m talking about languages that express behaviour, but in a really high-level, abstract kind of way.</p>
+<p>Now, it’s really important that you understand that I’m not talking about <a href="https://en.wikipedia.org/wiki/UML">UML</a>; a language used to describe the architecture of software. I’m talking about languages that express behaviour, but in a really high-level, abstract, kind of way.</p>
 <p>These languages tend to be based on logic. The classic example is sorting. Instead of saying, “in order to sort, we split the input into two equal halfs, sort the two halfs recursively and merge the results”, we say, “sorting is a function that takes a list and produces a list. The output is a permutation of the input and the output is <a href="https://en.wikipedia.org/wiki/Monotonic_function">monotone</a>”.</p>
 <p>Expressing pure functions is all well and good, but what about real programs with side-effects? Without further ado, let’s dive into the <code>spec_object</code> DSL.</p>
 <h2 id="a-worked-example">A worked example</h2>
-<p>For this example, we’re going to specify the behaviour of a hashtable. To limit the scope, we’re only going to consider <code>set</code>, <code>get</code> and <code>delete</code>.</p>
+<p>For this example, we’re going to specify the behaviour of a hashtable. To limit the scope, we’re only going to consider <code>set</code>, <code>get</code> and <code>del</code>.</p>
 <p><code>spec_object</code> models time explicitly. Time is linear, discrete and the future doesn’t exist. <em>If this causes you philosophical problems, I don’t know what to suggest.</em></p>
-<p>Specifying the behaviour of the <code>set</code> and <code>del</code> is the easy part:</p>
+<p>Specifying the behaviour of <code>set</code> and <code>del</code> is the easy part:</p>
 <div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby">behaviour <span class="st">:set</span> <span class="kw">do</span> |args, output|
     output == <span class="dv">nil</span>
 <span class="kw">end</span>
@@ -71,22 +72,22 @@ behaviour <span class="st">:del</span> <span class="kw">do</span> |args, output|
     <span class="co"># ite stands for if-then-else</span>
     ite(
         output == <span class="dv">nil</span>,
-        <span class="dv">true</span>, <span class="co"># This should be true when nil was the result</span>
-        <span class="dv">true</span>  <span class="co"># This should be true when it wasn&#39;t</span>
+        ..., <span class="co"># This should be true when nil was the result</span>
+        ...  <span class="co"># This should be true when it wasn&#39;t</span>
     )
 <span class="kw">end</span></code></pre></div>
 <p>If the output was <code>nil</code>, it means, either the key was never set or the key was deleted and hasn’t been set since:</p>
 <div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby">behaviour <span class="st">:get</span> <span class="kw">do</span> |args, output|
-    the_key_was_never_set = <span class="dv">true</span>
-    the_key_was_deleted_and_not_set_since = <span class="dv">true</span>
+    the_key_was_never_set = ...
+    the_key_was_deleted_and_not_set_since = ...
 
     ite(
         output == <span class="dv">nil</span>,
         either(the_key_was_never_set, the_key_was_deleted_and_not_set_since),
-        <span class="dv">true</span>
+        ...
     )
 <span class="kw">end</span></code></pre></div>
-<p>The key never being set means there doesn’t exist a time and a value where the object received <code>:set</code> at that time with the <code>key</code> from <code>args</code> and the value:</p>
+<p>The key never being set means there doesn’t exist a time and a value where the object received <code>:set</code> with the <code>key</code> from <code>args</code> and the value:</p>
 <div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby">key = args[<span class="dv">0</span>]
 
 the_key_was_never_set =
@@ -218,8 +219,8 @@ the_key_was_never_set =
     )
 <span class="kw">end</span></code></pre></div>
 <p>It’s kind of wordy; Partly because I intentionally used riduculously long variable names and partly because I didn’t break out the individual pieces into their own methods, but hopefully you get the idea.</p>
-<p>Having gone to the trouble of specifying the behaviour of an object using logical language, <code>spec_object</code> is now able to detect cases where these constraints are broken (such as when we insert <code>nil</code> as a value). This would allow you to fuzz test your stateful APIs against their logical specification.</p>
-<p>I hope you found this interesting. <strong>Please note, <code>spec_object</code> is a prototype and should not be used for anything you care about!</strong></p>
+<p>Having gone to the trouble of specifying the behaviour of an object using logical language, <code>spec_object</code> is now able to detect cases where these constraints are broken (such as when we insert <code>nil</code> as a value). This allows you to fuzz test your stateful APIs against their logical specification.</p>
+<p>I hope you found this interesting. <strong>Again, <code>spec_object</code> is a prototype and should not be used for anything you care about!</strong></p>
 <p><a href="https://github.com/DanielWaterworth/spec_object">Here’s a link to the repo.</a></p>
 </body>
 </html>

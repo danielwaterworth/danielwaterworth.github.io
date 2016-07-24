@@ -4,7 +4,12 @@
 
 ![](../images/orb.jpg)
 
-## Rationale
+*`spec_object` is a DSL for describing the behaviour of objects. This is useful
+for documentation and testing. **It is a prototype and should not be used for
+anything remotely serious!** Please consider thing blog post as a request for
+comments.*
+
+## Introduction
 
 Here's an interesting question: "what would a programming language look like
 that allows you to describe what a program does, but not how that is
@@ -17,7 +22,7 @@ then there have been a number of so-called
 
 Now, it's really important that you understand that I'm not talking about
 [UML][2]; a language used to describe the architecture of software. I'm talking
-about languages that express behaviour, but in a really high-level, abstract
+about languages that express behaviour, but in a really high-level, abstract,
 kind of way.
 
 These languages tend to be based on logic. The classic example is sorting.
@@ -32,13 +37,13 @@ with side-effects? Without further ado, let's dive into the `spec_object` DSL.
 ## A worked example
 
 For this example, we're going to specify the behaviour of a hashtable. To limit
-the scope, we're only going to consider `set`, `get` and `delete`.
+the scope, we're only going to consider `set`, `get` and `del`.
 
 `spec_object` models time explicitly. Time is linear, discrete and the future
 doesn't exist. *If this causes you philosophical problems, I don't know what to
 suggest.*
 
-Specifying the behaviour of the `set` and `del` is the easy part:
+Specifying the behaviour of `set` and `del` is the easy part:
 
 ~~~~ {.ruby}
 behaviour :set do |args, output|
@@ -66,8 +71,8 @@ behaviour :get do |args, output|
     # ite stands for if-then-else
     ite(
         output == nil,
-        true, # This should be true when nil was the result
-        true  # This should be true when it wasn't
+        ..., # This should be true when nil was the result
+        ...  # This should be true when it wasn't
     )
 end
 ~~~~
@@ -77,19 +82,19 @@ deleted and hasn't been set since:
 
 ~~~~ {.ruby}
 behaviour :get do |args, output|
-    the_key_was_never_set = true
-    the_key_was_deleted_and_not_set_since = true
+    the_key_was_never_set = ...
+    the_key_was_deleted_and_not_set_since = ...
 
     ite(
         output == nil,
         either(the_key_was_never_set, the_key_was_deleted_and_not_set_since),
-        true
+        ...
     )
 end
 ~~~~
 
 The key never being set means there doesn't exist a time and a value where the
-object received `:set` at that time with the `key` from `args` and the value:
+object received `:set` with the `key` from `args` and the value:
 
 ~~~~ {.ruby}
 key = args[0]
@@ -246,11 +251,11 @@ their own methods, but hopefully you get the idea.
 
 Having gone to the trouble of specifying the behaviour of an object using
 logical language, `spec_object` is now able to detect cases where these
-constraints are broken (such as when we insert `nil` as a value). This would
-allow you to fuzz test your stateful APIs against their logical specification.
+constraints are broken (such as when we insert `nil` as a value). This allows
+you to fuzz test your stateful APIs against their logical specification.
 
-I hope you found this interesting. **Please note, `spec_object` is a
-prototype and should not be used for anything you care about!**
+I hope you found this interesting. **Again, `spec_object` is a prototype and
+should not be used for anything you care about!**
 
 [Here's a link to the repo.][4]
 
