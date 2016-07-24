@@ -49,6 +49,7 @@ code {
 }
 
 pre {
+    overflow-x: auto;
     padding: 1em;
 }
 
