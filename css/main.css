@@ -28,10 +28,12 @@ h1 {
     font-family: essays1743;
     font-size: 35pt;
     text-align: center;
+    line-height: 90%;
 }
 
 h2 {
     font-family: essays1743;
+    line-height: 90%;
 }
 
 pre, code { color: #d3d7cf; background-color: #2e3436; }
