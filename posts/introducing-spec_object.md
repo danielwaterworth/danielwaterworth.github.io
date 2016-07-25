@@ -4,16 +4,16 @@
 
 ![](../images/orb.jpg)
 
-*`spec_object` is a DSL for describing the behaviour of objects. This is useful
-for documentation and testing. **It is a prototype and should not be used for
-anything remotely serious!** Please consider thing blog post as a request for
-comments.*
+*`spec_object` is a DSL for describing the behaviour of objects. These
+descriptions can serve as documentation and aid in testing. **It is a prototype
+and should not be used for anything remotely serious!** Please consider this
+blog post as a request for comments.*
 
 ## Introduction
 
 Here's an interesting question: "what would a programming language look like
 that allows you to describe what a program does, but not how that is
-accomplished?". As programmers, we like to talk about declarative languages and
+accomplished?". As programmers, we like to talk about declarative languages,
 DSLs and APIs, but how far can declarative-ness be pushed?
 
 Like all good fundamental CS questions, it was answered in the 70s and since
@@ -25,14 +25,14 @@ Now, it's really important that you understand that I'm not talking about
 about languages that express behaviour, but in a really high-level, abstract,
 kind of way.
 
-These languages tend to be based on logic. The classic example is sorting.
-Instead of saying, "in order to sort, we split the input into two equal halfs,
-sort the two halfs recursively and merge the results", we say, "sorting is a
-function that takes a list and produces a list. The output is a permutation of
-the input and the output is [monotone][3]".
+These languages tend to be based on logic. The hello-world of how they are
+different is sorting. Instead of saying, "in order to sort, we split the input
+into two equal halfs, sort the two halfs recursively and merge the results", we
+say, "sorting is a function that takes a list and produces a list. The output
+is a permutation of the input and the output is [monotone][3]".
 
-Expressing pure functions is all well and good, but what about real programs
-with side-effects? Without further ado, let's dive into the `spec_object` DSL.
+Describing pure functions is all well and good, but what about real programs
+with side-effects? To demonstrate this, let's dive into the `spec_object` DSL.
 
 ## A worked example
 
@@ -43,7 +43,7 @@ the scope, we're only going to consider `set`, `get` and `del`.
 doesn't exist. *If this causes you philosophical problems, I don't know what to
 suggest.*
 
-Specifying the behaviour of `set` and `del` is the easy part:
+Describing the behaviour of `set` and `del` is the easy part:
 
 ~~~~ {.ruby}
 behaviour :set do |args, output|
@@ -56,13 +56,13 @@ end
 ~~~~
 
 `get` is much more difficult. The behaviour of `get` depends on what has
-already happened. There are a few differents cases to consider:
+already happened. There are a few different cases to consider:
 
  * The key was never set,
  * The key was set and deleted,
  * The key was set and updated,
 
-Any logical assertions we make should be true of all executions; we need to
+Any logical claims we make should be true of all executions; we need to
 somehow divide the space of possibilities to attack this problem. One natural
 line of division is whether the output was `nil` or not.
 
@@ -249,7 +249,7 @@ It's kind of wordy; Partly because I intentionally used riduculously long
 variable names and partly because I didn't break out the individual pieces into
 their own methods, but hopefully you get the idea.
 
-Having gone to the trouble of specifying the behaviour of an object using
+Having gone to the trouble of describing the behaviour of an object using
 logical language, `spec_object` is now able to detect cases where these
 constraints are broken (such as when we insert `nil` as a value). This allows
 you to fuzz test your stateful APIs against their logical specification.
