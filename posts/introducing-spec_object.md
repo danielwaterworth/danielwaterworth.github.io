@@ -254,10 +254,10 @@ logical language, `spec_object` is now able to detect cases where these
 constraints are broken (such as when we insert `nil` as a value). This allows
 you to fuzz test your stateful APIs against their logical specification.
 
-I hope you found this interesting. **Again, `spec_object` is a prototype and
-should not be used for anything you care about!**
+I hope you found this interesting. **Again, `spec_object` is a prototype, do
+not try to use it for anything you care about!**
 
-[Here's a link to the repo.][4]
+[Here's a link to the repo for the brave.][4]
 
 [1]: https://en.wikipedia.org/wiki/Specification_language
 [2]: https://en.wikipedia.org/wiki/UML
