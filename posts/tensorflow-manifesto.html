@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="author" content="Daniel Waterworth">
+  <title>Tensorflow Manifesto</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { font-weight: bold; } /* Keyword */
+code > span.dt { text-decoration: underline; } /* DataType */
+code > span.co { font-style: italic; } /* Comment */
+code > span.al { font-weight: bold; } /* Alert */
+code > span.er { font-weight: bold; } /* Error */
+code > span.wa { font-style: italic; } /* Warning */
+code > span.cf { font-weight: bold; } /* ControlFlow */
+code > span.pp { font-weight: bold; } /* Preprocessor */
+code > span.do { font-style: italic; } /* Documentation */
+code > span.an { font-style: italic; } /* Annotation */
+code > span.cv { font-style: italic; } /* CommentVar */
+code > span.in { font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="./../css/main.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<header>
+<h1 class="title">Tensorflow Manifesto</h1>
+<h2 class="author">Daniel Waterworth</h2>
+<h3 class="date">October 7, 2017</h3>
+</header>
+<figure>
+<img src="../images/fight.jpg" />
+</figure>
+<p><em>image from used under creative commons, <a href="https://www.flickr.com/photos/39400215@N04/3713813916/">see original</a></em></p>
+<h2 id="the-way-things-are">The way things are</h2>
+<p>Tensorflow is the most widely used machine learning framework. It’s rise has been nothing short of meteoric. It’s used by everyone from <a href="https://cloud.google.com/blog/big-data/2016/08/how-a-japanese-cucumber-farmer-is-using-deep-learning-and-tensorflow">Japanese cucumber farmers</a> (supposedly) to the team behind <a href="https://deepmind.com/research/alphago/">alphago</a>.</p>
+<p>You might reasonably think then, with all this code written against this particular framework, that code-sharing and reuse within the tensorflow ecosystem would be rife. Unfortunately, and as you will undoubted know if you have but dabbled in these waters, this is not the case. The ecosystem is fragmented beyond reason. There are more high-level libraries than I care to list and they don’t play well together. Many were created by google themselves. Looking for an implementation of a particular model? It’s not enough that the authors used tensorflow; it needs to be in your tensorflow strain.</p>
+<p>This state of affairs serves nobody and it’s time we did something to fix it. What I am proposing is not another meta-framework, as if the problem would be solved if everyone just did things my way™. Instead, I propose a set of principles that will facilitate sharing, reuse and co-mingling. Perhaps, by adherence to these ideals, all of tensorflow-dom can finally be united.</p>
+<p>My central thesis is that the reason for the current fragmentation; the reason existing meta-frameworks don’t play nicely together is, in a word, variables. Each library manages them differently and in incompatible ways. If we could agree on how we manage our variables, perhaps we could mend our fragmented ecosystem.</p>
+<h2 id="principles">Principles</h2>
+<p>So, without further ado, my principles for a united tensorflow are:</p>
+<ol type="1">
+<li>All variables must by owned by an object,
+<ul>
+<li>This object:
+<ul>
+<li>must be capable of initializing its variables within a session,</li>
+<li>must provide, upon request, a list of all of its variables; this facilitates, amongst other things, saving/loading,</li>
+</ul></li>
+</ul></li>
+</ol>
+<h2 id="demostration">Demostration</h2>
+<p>Allow me to demonstrate this style with a short, but complete, example. Here, we’ll be fine-tuning a pretrained model on a different task. We’ll just retrain the top layer.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> tensorflow <span class="im">as</span> tf
+<span class="im">import</span> somelib
+
+<span class="kw">def</span> my_network(params, <span class="bu">input</span>):
+    output <span class="op">=</span> somelib.conv2d(params[<span class="st">&#39;conv1&#39;</span>], <span class="bu">input</span>, <span class="dv">50</span>, (<span class="dv">3</span>, <span class="dv">3</span>))
+    <span class="cf">return</span> output
+
+params <span class="op">=</span> somelib.Parameters(<span class="st">&#39;my_network&#39;</span>)
+
+<span class="bu">input</span> <span class="op">=</span> tf.placeholder(<span class="st">&#39;input&#39;</span>, [batch_size, <span class="dv">64</span>, <span class="dv">64</span>, <span class="dv">3</span>])
+expected_output <span class="op">=</span> tf.placeholder(<span class="st">&#39;expected_output&#39;</span>, [batch_size, <span class="dv">1000</span>])
+
+<span class="co"># The normal optimizers in tensorflow don&#39;t keep track of their variables, but</span>
+<span class="co"># this one does.</span>
+optimizer <span class="op">=</span> somelib.Optimizer(loss, params.variables)
+
+<span class="cf">with</span> tf.Session() <span class="im">as</span> sess:
+    optimizer.initialize()
+    params.load_from(<span class="st">&#39;pretrained_network.model&#39;</span>)
+
+    <span class="cf">for</span> i <span class="op">in</span> <span class="bu">range</span>(<span class="dv">1000</span>):
+        inputs, outputs <span class="op">=</span> load_batch()
+        loss_value, _ <span class="op">=</span> <span class="op">\</span>
+            sess.run(
+                [loss, optimizer.train_op],
+                feed_dict<span class="op">=</span>{<span class="bu">input</span>: inputs, expected_output: outputs}
+            )
+        <span class="bu">print</span>(loss_value)
+
+    params.save_to(<span class="st">&#39;fine_tuned_network.model&#39;</span>)</code></pre></div>
+</body>
+</html>
