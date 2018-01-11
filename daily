@@ -1,0 +1,3 @@
+#!/bin/bash
+cp ./bloglets/template.md ./bloglets/$(date "+%Y_%m_%d.md");
+vim ./bloglets/$(date "+%Y_%m_%d.md");
