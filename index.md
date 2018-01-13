@@ -10,6 +10,10 @@
 * [QBF solving](./posts/qbf-solving.html)
 * [Introducing spec_object](./posts/introducing-spec_object.html)
 
+## Plastic Compiler
+
+* [Lexing](./compiler/lexer.html)
+
 ## Bloglets
 
 [Bloglets](./bloglets.html)
