@@ -9,9 +9,9 @@ for FILE in `find | grep "\.md$"`; do
         --standalone \
         --smart \
         --css=$CSS_FILE \
-        --include-in-header=./header/responsive.html \
         --to=html5 \
         --highlight-style=monochrome \
+        --template ./template.html \
         $FILE \
         -o ${FILE%.md}.html;
 done
