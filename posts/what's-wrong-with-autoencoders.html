@@ -5,6 +5,7 @@
   <meta name="generator" content="pandoc">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <meta name="author" content="Daniel Waterworth">
+  <meta name="dcterms.date" content="2016-08-31">
   <title>What’s wrong with autoencoders?</title>
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="./../css/main.css">
@@ -17,7 +18,7 @@
 <a href=http://danielwaterworth.com>Daniel's Blog</a>
 <h1 class="title">What’s wrong with autoencoders?</h1>
 <h2 class="author">Daniel Waterworth</h2>
-<h3 class="date">August 31st, 2016</h3>
+<h3 class="date">August 31, 2016</h3>
 </header>
 <p>An autoencoder is an artificial neural network that is trained to reconstruct training samples by encoding and decoding them. Typically, the inner most layer of the network is narrow. This forces the network to compress the the data, rather than just copying it. More information can be found on the <a href="https://en.wikipedia.org/wiki/Autoencoder">wikipedia page</a>.</p>
 <p>As noted on that page, for a single layer network (which is a linear model), the optimal solution is to do PCA on the input samples and to use the most prominent components as the neuron weights. So, what does an optimal single layer autoencoder look like for natural image patches? Well, if we do PCA on a large sample set, we get something like this:</p>

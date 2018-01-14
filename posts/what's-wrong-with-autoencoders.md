@@ -1,6 +1,6 @@
 % What's wrong with autoencoders?
 % Daniel Waterworth
-% August 31st, 2016
+% August 31, 2016
 
 An autoencoder is an artificial neural network that is trained to reconstruct training samples by encoding and
 decoding them. Typically, the inner most layer of the network is narrow. This forces the network to compress the
