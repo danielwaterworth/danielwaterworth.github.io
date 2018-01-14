@@ -1,3 +1,6 @@
+% Daniel Waterworth
+% Daniel Waterworth
+
 # Musings
 ## Machine Learning
 

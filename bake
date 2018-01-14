@@ -15,3 +15,13 @@ for FILE in `find | grep "\.md$"`; do
         $FILE \
         -o ${FILE%.md}.html;
 done
+
+pandoc \
+    --standalone \
+    --smart \
+    --css="./css/main.css" \
+    --to=html5 \
+    --highlight-style=monochrome \
+    --template ./index_template.html \
+    index.md \
+    -o index.html;
