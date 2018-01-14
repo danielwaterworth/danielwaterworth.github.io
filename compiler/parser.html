@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="author" content="Daniel Waterworth">
+  <meta name="dcterms.date" content="2018-01-14">
+  <title>Parsing</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="./../css/main.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<a href=http://danielwaterworth.com>Daniel's Blog</a>
+<h1 class="title">Parsing</h1>
+<h2 class="author">Daniel Waterworth</h2>
+<h3 class="date">January 14, 2018</h3>
+</header>
+<p><em>This post is part of a series on the plastic compiler<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>. Each post will cover one pass in the compiler. The first post is <a href="/compiler/lexer.html">here</a>.</em></p>
+<p>After lexing comes parsing. Again this is written in recursive descent style, but this time, we have the option to backtrack (by storing a stack of parser states). In practice, backtracking makes producing coherent error messages more difficult, so I do this as little as possible. Eventually, I’d like to do away with it completely.</p>
+<p>If you’ve never seen expressions parsed with a recursive descent parser, it’s quite interesting. Let’s say that we want a parser that can parse expressions with numbers, plus operators and multiplication operators. So that:</p>
+<pre><code>1+2*3+4</code></pre>
+<p>is parsed as:</p>
+<pre><code>1+((2*3)+4)</code></pre>
+<p>We’ll have three functions: one for the numbers, one for add expressions and one for multiply expressions.</p>
+<p>Plastic’s syntax is also quite interesting.</p>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://github.com/danielwaterworth/plastic-v2">plastic on github</a><a href="#fnref1">↩</a></p></li>
+</ol>
+</section>
+</body>
+</html>
