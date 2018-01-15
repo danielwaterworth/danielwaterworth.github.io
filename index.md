@@ -1,7 +1,11 @@
 % Daniel Waterworth
 % Daniel Waterworth
 
-# Musings
+Hello, I'm Daniel.
+
+I'm a software developer based in England. Below are some random things
+that I've written.
+
 ## Machine Learning
 
 * [What's wrong with autoencoders](./posts/what's-wrong-with-autoencoders.html)
