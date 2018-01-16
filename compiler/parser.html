@@ -8,6 +8,26 @@
   <meta name="dcterms.date" content="2018-01-14">
   <title>Parsing</title>
   <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { font-weight: bold; } /* Keyword */
+code > span.dt { text-decoration: underline; } /* DataType */
+code > span.co { font-style: italic; } /* Comment */
+code > span.al { font-weight: bold; } /* Alert */
+code > span.er { font-weight: bold; } /* Error */
+code > span.wa { font-style: italic; } /* Warning */
+code > span.cf { font-weight: bold; } /* ControlFlow */
+code > span.pp { font-weight: bold; } /* Preprocessor */
+code > span.do { font-style: italic; } /* Documentation */
+code > span.an { font-style: italic; } /* Annotation */
+code > span.cv { font-style: italic; } /* CommentVar */
+code > span.in { font-style: italic; } /* Information */
+  </style>
   <link rel="stylesheet" href="./../css/main.css">
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
@@ -21,13 +41,63 @@
 <h3 class="date">January 14, 2018</h3>
 </header>
 <p><em>This post is part of a series on the plastic compiler<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>. Each post will cover one pass in the compiler. The first post is <a href="/compiler/lexer.html">here</a>.</em></p>
-<p>After lexing comes parsing. Again this is written in recursive descent style, but this time, we have the option to backtrack (by storing a stack of parser states). In practice, backtracking makes producing coherent error messages more difficult, so I do this as little as possible. Eventually, I’d like to do away with it completely.</p>
-<p>If you’ve never seen expressions parsed with a recursive descent parser, it’s quite interesting. Let’s say that we want a parser that can parse expressions with numbers, plus operators and multiplication operators. So that:</p>
-<pre><code>1+2*3+4</code></pre>
-<p>is parsed as:</p>
-<pre><code>1+((2*3)+4)</code></pre>
-<p>We’ll have three functions: one for the numbers, one for add expressions and one for multiply expressions.</p>
+<p>After lexing comes parsing. Again, like the lexer, this is written in recursive descent style, but now we are going through the list of tokens instead of the characters of a string. Also, we have the option to backtrack; this means that we can attempt to parse something one way and it if doesn’t succeed, we can try to parse it another way.</p>
+<p>Backtracking works by keeping track of past parser states. When we start trying to parse something that might fail, we keep a copy of the parser state before attempting the parse. If it fails we revert to that state and if it succeeds, we discard that state. In practice, backtracking makes producing coherent error messages more difficult, so I do this as little as possible. Eventually, I’d like to do away with backtracking completely.</p>
+<p>In order to make copying the current state cheap, I just keep a reference to where in the input the next token is. This means that I don’t ever need to modify the list of tokens and so it can be shared freely.</p>
+<p><em>Incidentally, if you’ve done any research, you’ll have noticed that most compilers/interpreters/static analysis tools/etc have their own hand-written parser. The reason for this is that it’s really hard to get useful error messages out of auto-generated parsers (at least using currently popular techniques).</em></p>
+<p>Now, if you’ve understood the above and the lexer, you should be able to go away and produce a parser. Or at least, you might be able to, but don’t be surprised if start writing code to parse expressions and you become unstuck.</p>
+<p>Expressions are difficult because of <strong>precedence</strong>.</p>
+<p>What is precedence? Precedence is the reason 3*7+2 = 23 and not 27. In this example, multiplication has a higher precedence than addition and it is said to bind more strongly.</p>
+<p>If you’ve never seen expressions parsed with a recursive descent parser, it’s quite interesting. Let’s say that we want a parser that can parse 3*7+2.</p>
+<p>We’ll have three functions: one for the numbers, one for add expressions and one for multiply expressions. The call chain is going to go:</p>
+<pre><code>parse_add_expression -&gt; parse_multiply_expression -&gt; parse_number</code></pre>
+<p>We are always calling from low precedence to higher precedence. Here’s some psuedo code:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">    <span class="kw">def</span> parse_add_expression(<span class="va">self</span>):
+        expr <span class="op">=</span> <span class="va">self</span>.parse_multiply_expression()
+        <span class="cf">while</span> <span class="va">True</span>:
+            <span class="cf">if</span> the <span class="bu">next</span> token <span class="op">is</span> a plus sign:
+                consume it
+                expr <span class="op">=</span> Add(expr, <span class="va">self</span>.parse_multiply_expression())
+            <span class="cf">else</span>:
+                <span class="cf">return</span> expr</code></pre></div>
+<p>Parsing multiply expressions is exactly the same:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">    <span class="kw">def</span> parse_multiply_expression(<span class="va">self</span>):
+        expr <span class="op">=</span> <span class="va">self</span>.parse_number()
+        <span class="cf">while</span> <span class="va">True</span>:
+            <span class="cf">if</span> the <span class="bu">next</span> token <span class="op">is</span> an asterisk:
+                consume it
+                expr <span class="op">=</span> Multiply(expr, <span class="va">self</span>.parse_number())
+            <span class="cf">else</span>:
+                <span class="cf">return</span> expr</code></pre></div>
+<p>Hopefully you can see why this works. When you parse an expression like this:</p>
+<pre><code>2*3*4+5*6*7</code></pre>
+<p>The <code>parse_add_expression</code> function is calling out to <code>parse_multiply_expression</code> which consumes as much input as it can without going below its precedence level. Then <code>parse_add_expression</code> inspects the next token and can decide whether that token should be dealt with at the current precedence level or whether it is lower.</p>
 <p>Plastic’s syntax is also quite interesting.</p>
+<p>Here’s an example of a function definition:</p>
+<pre><code>define
+  lookup
+  @
+    key: *,
+    value: *,
+    n: u64,
+  &lt;~
+    hashable(key),
+  &lt;-
+    table: ptr(hashtable(key, value, n)),
+    key: key,
+  -&gt;
+    maybe(value)
+  = {
+    ...
+  }</code></pre>
+<ul>
+<li>The <code>@</code> section is for type arguments, where you specify their name and kind,</li>
+<li>The <code>&lt;~</code> section is for constraints,</li>
+<li>The <code>&lt;-</code> section is for parameters,</li>
+<li>The type after <code>-&gt;</code> is the return type,</li>
+<li>And <code>= { ... }</code> is for the body of the function,</li>
+</ul>
+<p>I hope you found this interesting.</p>
 <section class="footnotes">
 <hr />
 <ol>
