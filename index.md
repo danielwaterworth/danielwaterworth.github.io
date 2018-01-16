@@ -20,6 +20,7 @@ that I've written.
 ## Plastic Compiler
 
 * [Lexing](./compiler/lexer.html)
+* [Parsing](./compiler/parser.html)
 
 ## Bloglets
 
