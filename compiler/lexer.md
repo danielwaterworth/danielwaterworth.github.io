@@ -61,4 +61,7 @@ class Lexer:
 
 So, it's pretty crude, but it works for now.
 
+*If you'd like to continue your journey through the plastic compiler,
+the next article on parsing is [here](/compiler/parser.html)*.
+
 [^1]: [plastic on github](https://github.com/danielwaterworth/plastic-v2)
