@@ -22,4 +22,6 @@ sort checking is straight forward.
 All we have to do is ensure that when we mention a kind, the kind actually
 exists.
 
+*This article is a work in progress*
+
 [^1]: [plastic on github](https://github.com/danielwaterworth/plastic-v2)

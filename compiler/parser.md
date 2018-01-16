@@ -118,4 +118,7 @@ Here's an example of a function definition:
 
 I hope you found this interesting.
 
+*If you'd like to continue your journey through the plastic compiler,
+the next article on parsing is [here](/compiler/sort_checker.html)*.
+
 [^1]: [plastic on github](https://github.com/danielwaterworth/plastic-v2)

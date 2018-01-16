@@ -21,6 +21,7 @@ that I've written.
 
 * [Lexing](./compiler/lexer.html)
 * [Parsing](./compiler/parser.html)
+* [Sort Checking](./compiler/sort_checker.html)
 
 ## Bloglets
 
