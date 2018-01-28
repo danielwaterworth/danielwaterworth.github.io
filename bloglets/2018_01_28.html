@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="author" content="Daniel Waterworth">
+  <meta name="dcterms.date" content="2018-01-28">
+  <title>Go’s Solvability</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="./../css/main.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<a href=http://danielwaterworth.com>Daniel's Blog</a>
+<h1 class="title">Go’s Solvability</h1>
+<h2 class="author">Daniel Waterworth</h2>
+<h3 class="date">January 28, 2018</h3>
+</header>
+<p>Go is believed to be the oldest board game that has been continually played. It was invented in ancient China around 2,500 years ago, but its rules are very simple. You could learn to play it in an afternoon.</p>
+<p>I want to show you that, whilst I don’t know what it is, there is strategy that will always guarantee a win for one side, but again, I don’t know which side.</p>
+<p>To demonstrate this, I’ll start with a much simpler game. Here’s a game I’m calling the xor game:</p>
+<ul>
+<li>There are two players,</li>
+<li>Each player will take one turn,</li>
+<li>During their turn, the player will say either heads or tails,</li>
+<li>If heads was said once, the second player wins, otherwise the first player wins,</li>
+</ul>
+<p>The second player can always win this game. If the first player says heads, the second player says tails and if the first player says tails the second player says heads.</p>
+<p>We can write out a logical statement about the existence of this strategy using a quantified boolean formula like so:</p>
+<pre><code>∀x. ∃y. x ⊕ y</code></pre>
+<p>This says, for all ‘x’, there exists a ‘y’ such that either ‘x’ or ‘y’ is true, but not both. This proposition is true.</p>
+<p>We can also write out a quantified boolean formula for the existence of a winning strategy for the first player:</p>
+<pre><code>        _____
+∃x. ∀y. x ⊕ y</code></pre>
+<p>The bar over the top is negation; false with a bar over it is true, true with a bar over it is false. Negation shows up here because the two players have contrary aims. A winning strategy for one player means achieving a goal, for the other it means not allowing the other player to reach their goal.</p>
+<p>This proposition is false: there is no such strategy for the first player.</p>
+<p>Now, what I want to show you is that a lack of existence of strategy for the first player implies an existence of strategy for the second. To do this, I need to show you two equivalences.</p>
+<pre><code>        _____
+            _
+∃x. X = ∀x. X
+
+
+        _____
+            _
+∀x. X = ∃x. X</code></pre>
+<p>So, these statements say, “that there exists an ‘x’ such that ‘X’ means that it is not true that for all ‘x’, ‘X’ is false” and “that for all ‘x’, ‘X’ is true means that it is not true that there exists an ‘x’ such that ‘X’ is false.”</p>
+<p>So, back to the game. Our assertion that the first player has no strategy is written:</p>
+<pre><code>_____________
+∃x. ∀y. x ⊕ y</code></pre>
+<p>Via the first rule above, (and a cancelation of the double negative), we can say:</p>
+<pre><code>    _________
+∀x. ∀y. x ⊕ y</code></pre>
+<p>Furthermore, via the second rule:</p>
+<pre><code>        _____
+∀x. ∃y. x ⊕ y</code></pre>
+<p>This is exactly the form from above. Q.E.D.</p>
+<p>Now, any game that has turns like this where all information is available to all players and that finish after a finite number of turns can be transformed into logic like this. So exactly the same logical steps can be used to show that one side can be guaranteed to win.</p>
+<p>And this even applies to Go, or at least, it applies to some variants of it that have a maximum number of moves.</p>
+</body>
+</html>

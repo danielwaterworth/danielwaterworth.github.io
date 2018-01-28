@@ -25,6 +25,7 @@ that I've written.
 
 ## Bloglets
 
+ * [Go's Solvability](./bloglets/2018_01_28.html)
  * [The Risk Economy](./bloglets/2018_01_25.html)
  * [An Interesting Exercise](./bloglets/2018_01_24.html)
  * [A Product of its Environment](./bloglets/2018_01_13.html)
