@@ -65,3 +65,7 @@ figure {
 .date {
     display: none;
 }
+
+figcaption {
+    display: none;
+}

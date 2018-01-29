@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="author" content="Daniel Waterworth">
+  <meta name="dcterms.date" content="2018-01-29">
+  <title>Understanding the Mechanics of Learning</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="./../css/main.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<a href=http://danielwaterworth.com>Daniel's Blog</a>
+<h1 class="title">Understanding the Mechanics of Learning</h1>
+<h2 class="author">Daniel Waterworth</h2>
+<h3 class="date">January 29, 2018</h3>
+</header>
+<p><em>This is a follow-on post from yesterday’s <a href="./2018_01_28.html">“Go’s Solvability”</a>.</em></p>
+<p>In yesterday’s post, I wrote about Go and its ability to be solved; that is, that there exists a strategy that will guarantee a win to one side. I showed you that such a strategy exists without giving you one. In fact, I couldn’t give you one if I wanted to, since I don’t know of any.</p>
+<p>I do know, however, how such a strategy could be shown to be effective, but what I really want to show you today is that what I have to say about Go strategies has huge implications for the way that we learn to do everything and even hints at the nature of creativity.</p>
+<p>Let’s say, for the sake of argument, that I have a strategy that guarantees a win for black (who goes first). This means that I know where to put the first stone and that after white has gone, based on their move, I know where I will put the next stone and so on and so forth.</p>
+<p>This strategy could be visualized as a huge tree of possibilities, like this:</p>
+<figure>
+<img src="../images/tree.png" alt="fractal tree" /><figcaption>fractal tree</figcaption>
+</figure>
+<p>Each of the forks in the tree represents a decision that the other side could make and each line represents an action that you will take. At every position in the tree there is a game board state.</p>
+<p>Now, for Go, this tree would be truly gargantuan. Many branches will have hundreds of subtrees. There isn’t enough matter in the known universe to create paper to print out the entirety of a complete Go decision tree.</p>
+<p>But, imagine that such a tree existed and I was trying to demonstrate the efficacy of it. What would I need to show you? Would it be enough to show you that every possible white move is accounted for and that every end point is a win for black? I hope that you agree that it is.</p>
+<p>Now, look at the image above again; notice that at every forking point, each tree is made of two sub-trees. In Go, my perfect strategy would be made up of sub-strategies, which in turn would be made up of smaller sub-strategies and so on.</p>
+<p>One method you could use for verifying my strategy is to work your way inward, starting with the smallest sub-strategies and moving towards the larger ones until you reach the root. By doing this, you would be working backwards through the game play.</p>
+<p>This is also a good way of producing the strategy; starting first with all valid board positions where black wins. Then, looking backwards in time, finding all board positions where black is sure to win in one move, then two moves and so on.</p>
+<p>Without external instruction, this is also the way that Go players learn to play Go. First, they learn to play well in the end game and they gradually work their way backwards until they are good at starting too.</p>
+<p><strong>In fact, it is the way that we learn to do everything.</strong></p>
+<p>First, we find strategies to immediately accomplish our goals. Then, as we learn, we find strategies that allow us to accomplish our goals further and further down the line.</p>
+<p>Imagine that you need to compose a symphony. Immediately attempting to put notes on the score is unlikely to yield anything remarkable, but if you started by learning to make 5 note melodies and gradually built up to larger and more complex pieces, in time you would be able to create impressive arrangements.</p>
+<p>Learning requires stepping stones like this. These stepping stones allow us to build up to larger and more intricate strategies. We continually require new opportunities that are slightly ahead of where we have progressed to in order to learn the next piece of our internal strategy.</p>
+<p>So, next time you are learning to do something, think about the tree above and what experience you require to make your internal strategy a little bit more intricate.</p>
+</body>
+</html>
