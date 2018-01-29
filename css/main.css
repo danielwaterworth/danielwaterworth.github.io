@@ -69,3 +69,7 @@ figure {
 figcaption {
     display: none;
 }
+
+a {
+  line-height: 2.0;
+}
