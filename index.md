@@ -25,6 +25,7 @@ that I've written.
 
 ## Bloglets
 
+ * [Valuable Skills](./bloglets/2018_02_05.html)
  * [Understanding the Mechanics of Learning](./bloglets/2018_01_29.html)
  * [Go's Solvability](./bloglets/2018_01_28.html)
  * [The Risk Economy](./bloglets/2018_01_25.html)
