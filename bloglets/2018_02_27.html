@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="author" content="Daniel Waterworth">
+  <meta name="dcterms.date" content="2018-02-27">
+  <title>React is a Leaky Abstraction</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="./../css/main.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<a href=http://danielwaterworth.com>Daniel's Blog</a>
+<h1 class="title">React is a Leaky Abstraction</h1>
+<h2 class="author">Daniel Waterworth</h2>
+<h3 class="date">February 27, 2018</h3>
+</header>
+<p>React is a Javascript UI framework produced by Facebook. It originally was developed to help deal with UI complexity in Facebook. A goal which they have acheived to some extent.</p>
+<p>However, React is no panacea. Let me show you why.</p>
+<p>A good way to structure UIs is as follows:</p>
+<figure>
+<img src="../images/ui1.png" />
+</figure>
+<p>The way the application looks is generated from its state in a process called rendering and when users interact with the look of things, they trigger events which change the application state.</p>
+<p>This is how games work and it is a good way to make understandable applications.</p>
+<p>This is also the structure that React is aspiring to. Unfortunately, React exists within web browsers and web browsers have DOM elements.</p>
+<p>Each element has its own state and its own look. These aspects are linked, so it has its own cycle. Text boxes, for example, have focus, text, selection, view position, etc and not all of this state can be read and written to from javascript.</p>
+<p>So, applications in the browser look like this:</p>
+<figure>
+<img src="../images/ui2.png" />
+</figure>
+<p>This is obviously much more complicated and more difficult to understand. React, attempting to rectify this situation, doesn’t/can’t divide DOM elements into their look and their state. So, React applications end up looking like this:</p>
+<figure>
+<img src="../images/ui3.png" />
+</figure>
+<p>This is a far cry from the original vision. What makes this worse is that updates to the DOM happen implicitly based on virtual DOM diffing. So now, since DOM nodes are special snowflakes, in order to understand your application, you have to understand the details of how this happens.</p>
+</body>
+</html>

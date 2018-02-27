@@ -25,6 +25,8 @@ that I've written.
 
 ## Bloglets
 
+ * [React is a Leaky Abstraction](./bloglets/2018_02_27.html)
+ * [Consumption](./bloglets/2018_02_14.html)
  * [Bifurcation](./bloglets/2018_02_08.html)
  * [Valuable Skills](./bloglets/2018_02_05.html)
  * [Understanding the Mechanics of Learning](./bloglets/2018_01_29.html)
